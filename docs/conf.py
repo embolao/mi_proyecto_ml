@@ -8,8 +8,9 @@
 # serve to show the default.
 
 import os
-import sys
 import shutil
+import sys
+from typing import Dict, List, Union
 
 # -- Path setup --------------------------------------------------------------
 
@@ -158,10 +159,7 @@ html_theme = "alabaster"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {
-    "sidebar_width": "300px",
-    "page_width": "1200px"
-}
+html_theme_options = {"sidebar_width": "300px", "page_width": "1200px"}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
@@ -233,22 +231,17 @@ htmlhelp_basename = "mi_proyecto_ml-doc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
-
-latex_elements = {
-    # The paper size ("letterpaper" or "a4paper").
-    # "papersize": "letterpaper",
-    # The font size ("10pt", "11pt" or "12pt").
-    # "pointsize": "10pt",
-    # Additional stuff for the LaTeX preamble.
-    # "preamble": "",
+# Configuración para LaTeX (Sphinx)
+latex_elements: Dict[str, Union[str, List[str], bool]] = {
+    "papersize": "a4paper",
+    "pointsize": "10pt",
+    "preamble": r"""
+        \usepackage{amsmath}
+        \usepackage[T1]{fontenc}
+    """,
+    "figure_align": "htbp",
+    "printindex": True,
 }
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [
-    ("index", "user_guide.tex", "mi_proyecto_ml Documentation", "embolao", "manual")
-]
-
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 # latex_logo = ""

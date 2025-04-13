@@ -1,0 +1,84 @@
+# Configuración óptima para proyectos ML con PyScaffold
+repos:
+  # --------------------------------------------------
+  # 1. Hooks básicos de mantenimiento
+  # --------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace      # Elimina espacios finales
+      - id: end-of-file-fixer        # Asegura salto de línea final
+      - id: check-yaml               # Valida sintaxis YAML
+      - id: check-merge-conflict     # Detecta conflictos de merge
+      - id: check-added-large-files  # Bloquea archivos >500KB
+        args: ['--maxkb=500']
+
+  # --------------------------------------------------
+  # 2. Formateo de código
+  # --------------------------------------------------
+  - repo: https://github.com/psf/black
+    rev: 23.10.1
+    hooks:
+      - id: black
+        args: [--line-length=88]  # Compatible con Jupyter
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+
+  # --------------------------------------------------
+  # 3. Análisis de calidad de código
+  # --------------------------------------------------
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        additional_dependencies: [
+          flake8-bugbear==23.7.10,    # Detecta patrones peligrosos
+          flake8-docstrings==1.7.0,   # Verifica docstrings
+          flake8-rst-docstrings==0.3.0,
+          pandas-vet==0.2.3,          # Mejores prácticas con pandas
+          darglint==1.8.1             # Valida docstrings de funciones
+        ]
+
+  # --------------------------------------------------
+  # 4. Type checking (Opcional pero recomendado)
+  # --------------------------------------------------
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.9.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - "types-pyyaml>=6.0.12"
+          - "numpy>=1.26.0"  # Versión compatible con Python 3.12
+          - "pandas>=2.1.0"
+          - "scikit-learn>=1.3.0"
+        args: [--ignore-missing-imports]
+        language_version: python3.12  # ¡Explícitamente usa 3.12!
+
+  # --------------------------------------------------
+  # 5. Para Jupyter Notebooks (Opcional)
+  # --------------------------------------------------
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.7.1
+    hooks:
+      - id: nbqa-black
+      - id: nbqa-isort
+      - id: nbqa-flake8
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.6.1
+    hooks:
+      - id: nbstripout
+        args: [--keep-count, --keep-output]
+
+  # --------------------------------------------------
+  # 6. Documentación (Opcional)
+  # --------------------------------------------------
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.16
+    hooks:
+      - id: mdformat
+        additional_dependencies: [mdformat-gfm]
