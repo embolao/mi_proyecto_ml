@@ -52,3 +52,15 @@ MANIFEST
 .venv*/
 .conda*/
 .python-version
+# Ignorar datos crudos
+data/raw/*
+# Ignorar datos crudos pero mantener estructura
+data/raw/*
+!data/raw/.gitkeep
+
+# Otros archivos a ignorar
+*.pkl
+*.h5
+*.pt
+__pycache__/
+.ipynb_checkpoints/
