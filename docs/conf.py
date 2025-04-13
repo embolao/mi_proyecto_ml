@@ -12,6 +12,8 @@ import shutil
 import sys
 from typing import Dict, List, Union
 
+import sphinx_rtd_theme  # type: ignore
+
 # -- Path setup --------------------------------------------------------------
 
 __location__ = os.path.dirname(__file__)
@@ -22,38 +24,40 @@ __location__ = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(__location__, "../src"))
 
 # -- Run sphinx-apidoc -------------------------------------------------------
-# This hack is necessary since RTD does not issue `sphinx-apidoc` before running
-# `sphinx-build -b html . _build/html`. See Issue:
-# https://github.com/readthedocs/readthedocs.org/issues/1139
-# DON'T FORGET: Check the box "Install your project inside a virtualenv using
-# setup.py install" in the RTD Advanced Settings.
-# Additionally it helps us to avoid running apidoc manually
-
-try:  # for Sphinx >= 1.7
-    from sphinx.ext import apidoc
-except ImportError:
-    from sphinx import apidoc
-
+# -- Run sphinx-apidoc -------------------------------------------------------
 output_dir = os.path.join(__location__, "api")
 module_dir = os.path.join(__location__, "../src/ml")
-try:
-    shutil.rmtree(output_dir)
-except FileNotFoundError:
-    pass
 
-try:
-    import sphinx
+# Asegurarse de que el directorio api existe
+os.makedirs(output_dir, exist_ok=True)
 
-    cmd_line = f"sphinx-apidoc --implicit-namespaces -f -o {output_dir} {module_dir}"
 
-    args = cmd_line.split(" ")
-    if tuple(sphinx.__version__.split(".")) >= ("1", "7"):
-        # This is a rudimentary parse_version to avoid external dependencies
-        args = args[1:]
+# Configuración de apidoc
+def run_apidoc(_):
+    """Genera documentación API automáticamente."""
+    from sphinx.ext import apidoc  # type: ignore
 
-    apidoc.main(args)
-except Exception as e:
-    print("Running `sphinx-apidoc` failed!\n{}".format(e))
+    args = [
+        "--force",  # Sobrescribir archivos existentes
+        "--separate",  # Crear archivos separados para cada módulo
+        "--module-first",  # Listar módulos primero
+        "--output-dir",
+        output_dir,
+        module_dir,
+        # Excluir directorios
+        f"{module_dir}/tests",
+        f"{module_dir}/setup.py",
+    ]
+
+    try:
+        apidoc.main(args)
+    except Exception as e:
+        print(f"Error al ejecutar sphinx-apidoc: {e}")
+
+
+def setup(app):
+    app.connect("builder-inited", run_apidoc)
+
 
 # -- General configuration ---------------------------------------------------
 
@@ -73,8 +77,53 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
+    "sphinx.ext.imgmath",  # Para ecuaciones matemáticas
+    "sphinx_copybutton",  # Para botones de copiar en bloques de código
 ]
+# Configuración de autodoc
+autodoc_default_options = {
+    "members": True,
+    "member-order": "bysource",
+    "special-members": "__init__",
+    "undoc-members": True,
+    "exclude-members": "__weakref__",
+}
+autodoc_mock_imports = [
+    "tensorflow",
+    "torch",
+]
+# Configuración de napoleon para Google style docstrings
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
+napoleon_include_init_with_doc = True
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = True
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_references = True
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = True
+# -- Opciones para HTML -------------------------------------------------
+html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]  # Añade esto al inicio
 
+html_theme_options = {
+    "logo_only": False,
+    "display_version": True,
+    "prev_next_buttons_location": "both",
+    "style_external_links": True,
+    "vcs_pageview_mode": "blob",
+    "style_nav_header_background": "#2980B9",
+    # Toc options
+    "collapse_navigation": False,
+    "sticky_navigation": True,
+    "navigation_depth": 4,
+    "includehidden": True,
+    "titles_only": False,
+}
+
+# Si usas DL y no quieres instalar en RTD
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 

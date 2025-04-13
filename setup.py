@@ -1,22 +1,7 @@
-"""
-    Setup file for mi_proyecto_ml.
-    Use setup.cfg to configure your project.
+from setuptools import find_packages, setup
 
-    This file was generated with PyScaffold 4.6.
-    PyScaffold helps you to put up the scaffold of your new Python project.
-    Learn more under: https://pyscaffold.org/
-"""
-
-from setuptools import setup
-
-if __name__ == "__main__":
-    try:
-        setup(use_scm_version={"version_scheme": "no-guess-dev"})
-    except:  # noqa
-        print(
-            "\n\nAn error occurred while building the project, "
-            "please ensure you have the most updated version of setuptools, "
-            "setuptools_scm and wheel with:\n"
-            "   pip install -U setuptools setuptools_scm wheel\n\n"
-        )
-        raise
+setup(
+    name="mi_proyecto_ml",
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
+)

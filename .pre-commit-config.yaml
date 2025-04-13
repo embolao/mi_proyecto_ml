@@ -4,7 +4,7 @@ repos:
   # 1. Hooks básicos de mantenimiento
   # --------------------------------------------------
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace      # Elimina espacios finales
       - id: end-of-file-fixer        # Asegura salto de línea final
@@ -17,13 +17,13 @@ repos:
   # 2. Formateo de código
   # --------------------------------------------------
   - repo: https://github.com/psf/black
-    rev: 23.10.1
+    rev: 25.1.0
     hooks:
       - id: black
         args: [--line-length=88]  # Compatible con Jupyter
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 6.0.1
     hooks:
       - id: isort
         args: ["--profile", "black"]
@@ -32,7 +32,7 @@ repos:
   # 3. Análisis de calidad de código
   # --------------------------------------------------
   - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.2.0
     hooks:
       - id: flake8
         additional_dependencies: [
@@ -47,7 +47,7 @@ repos:
   # 4. Type checking (Opcional pero recomendado)
   # --------------------------------------------------
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.9.0
+    rev: v1.15.0
     hooks:
       - id: mypy
         additional_dependencies:
@@ -62,14 +62,14 @@ repos:
   # 5. Para Jupyter Notebooks (Opcional)
   # --------------------------------------------------
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.7.1
+    rev: 1.9.1
     hooks:
       - id: nbqa-black
       - id: nbqa-isort
       - id: nbqa-flake8
 
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.6.1
+    rev: 0.8.1
     hooks:
       - id: nbstripout
         args: [--keep-count, --keep-output]
@@ -78,7 +78,11 @@ repos:
   # 6. Documentación (Opcional)
   # --------------------------------------------------
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.16
+    rev: 0.7.22
     hooks:
       - id: mdformat
         additional_dependencies: [mdformat-gfm]
+
+ci:
+  autofix_commit_msg: "style: Auto-fixes de pre-commit"
+  skip: [nbstripout, mdformat]  # Si no usas estos frecuentemente
